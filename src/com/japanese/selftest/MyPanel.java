@@ -11,15 +11,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 
 public class MyPanel extends JPanel {
 
     BufferedImage img;
 
-    String img1 = "res/imgs/a_h_a.png"; // 首頁(封面圖)
+    String cover = "res/imgs/a_h_a.png"; // 首頁(封面圖)
+    static String startAlphabet = "ka";
+    static String endAlphabet = "so";
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -39,8 +40,14 @@ public class MyPanel extends JPanel {
                 Arrays.sort(listOfFiles); // 按字典順序
 
                 ArrayList<String> fileNamelist = new ArrayList<>();
+
+                // 可以指定頭尾
+                int start = myMap.get(startAlphabet); // 不指定 就註解掉
+                int end = myMap.get(endAlphabet);
+
                 // 把音檔路徑，存入list
-                for (int i = 0; i < listOfFiles.length; i++) {
+                for (int i = start; i < (end+1); i++) {
+                    System.out.print(i + ", "); // 5-14
                     if (listOfFiles[i].isFile()) {
                         System.out.println("audio File " + listOfFiles[i].getName());
                         fileNamelist.add("res/audio/"+listOfFiles[i].getName());
@@ -83,7 +90,7 @@ public class MyPanel extends JPanel {
         setVisible(true);
 
         // 先載入第一張 png
-        loadImage(img1); // 相對路徑字串
+        loadImage(cover); // 相對路徑字串
 
         File folder = new File("res/imgs");
         File[] listOfFiles = folder.listFiles();
@@ -92,8 +99,14 @@ public class MyPanel extends JPanel {
 
         ArrayList<String> fileNamelist = new ArrayList<>();
 
+        // 可以指定頭尾
+        int start = myMap.get(startAlphabet); // 不指定 就註解掉
+        int end = myMap.get(endAlphabet);
+        // System.out.println("start & end: " + start + " & " + end);
+
         // 把圖檔路徑，存入list
-        for (int i = 0; i < listOfFiles.length; i++) {
+        for (int i = start; i < (end+1); i++) {
+            System.out.print(i + ", "); // 5-14
 
             if (listOfFiles[i].isFile()) {
                 System.out.println("image File " + listOfFiles[i].getName());
@@ -143,5 +156,18 @@ public class MyPanel extends JPanel {
         graphics.drawImage(img, 0, -80, 600, 550, this);
     }
 
+    private static final Map<String, Integer> myMap;
+    static {
+        Map<String, Integer> aMap = new HashMap<>();
+        aMap.put("a",0);
+        aMap.put("o",4);
+        aMap.put("ka",5);
+        aMap.put("ko",9);
+        aMap.put("sa",10);
+        aMap.put("so",14);
+        aMap.put("ta",15);
+        aMap.put("to",19);
+        myMap = Collections.unmodifiableMap(aMap);
+    }
 
 }
