@@ -1,6 +1,10 @@
 package com.japanese.selftest;
 
+import jaco.mp3.player.MP3Player;
+
 import javax.imageio.ImageIO;
+import javax.print.attribute.standard.Media;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,11 +15,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+//import java.io.File;
+//import javafx.scene.media.Media;
+//import javafx.scene.media.MediaPlayer;
+
 public class MyPanel extends JPanel {
 
     BufferedImage img;
 
-    String img1 = "res/imgs/h_a.png";
+    String img1 = "res/imgs/h_a.png"; // 首頁(封面圖)
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -28,6 +36,27 @@ public class MyPanel extends JPanel {
                 frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frm.setLocationRelativeTo(null); // center the window
                 frm.add(new MyPanel());
+
+
+                frm.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                            System.out.println("Hi from KeyListener");
+
+
+
+                            String bip = "res/audio/a.mp3";
+                            File file = new File(bip);
+
+                            MP3Player mp3Player = new MP3Player(file);
+                            mp3Player.play();
+
+                        }
+                    }
+                });
+
+
             }
         });
     }
