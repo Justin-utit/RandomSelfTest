@@ -37,6 +37,18 @@ public class MyPanel extends JPanel {
                 frm.setLocationRelativeTo(null); // center the window
                 frm.add(new MyPanel());
 
+                File folder = new File("res/audio");
+                File[] listOfFiles = folder.listFiles();
+                ArrayList<String> fileNamelist = new ArrayList<>();
+                // 把音檔路徑，存入list
+                for (int i = 0; i < listOfFiles.length; i++) {
+                    if (listOfFiles[i].isFile()) {
+                        System.out.println("File " + listOfFiles[i].getName());
+                        fileNamelist.add("res/audio/"+listOfFiles[i].getName());
+                    } else if (listOfFiles[i].isDirectory()) {
+                        System.out.println("Directory " + listOfFiles[i].getName());
+                    }
+                }
 
                 frm.addKeyListener(new KeyAdapter() {
                     @Override
@@ -45,9 +57,16 @@ public class MyPanel extends JPanel {
                             System.out.println("Hi from KeyListener");
 
 
+                            // 產生隨機數字
+                            int min = 1;
+                            int max = fileNamelist.size();
+                            int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
 
-                            String bip = "res/audio/a.mp3";
-                            File file = new File(bip);
+                            // 點一下，就get a random index
+                            String pathWzName = fileNamelist.get(random_int-1); // index從0 開始
+
+                            // String bip = "res/audio/a.mp3";
+                            File file = new File(pathWzName);
 
                             MP3Player mp3Player = new MP3Player(file);
                             mp3Player.play();
