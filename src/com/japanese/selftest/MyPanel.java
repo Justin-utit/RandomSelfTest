@@ -3,8 +3,6 @@ package com.japanese.selftest;
 import jaco.mp3.player.MP3Player;
 
 import javax.imageio.ImageIO;
-import javax.print.attribute.standard.Media;
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -14,16 +12,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-//import java.io.File;
-//import javafx.scene.media.Media;
-//import javafx.scene.media.MediaPlayer;
 
 public class MyPanel extends JPanel {
 
     BufferedImage img;
 
-    String img1 = "res/imgs/h_a.png"; // 首頁(封面圖)
+    String img1 = "res/imgs/a_h_a.png"; // 首頁(封面圖)
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -39,11 +35,14 @@ public class MyPanel extends JPanel {
 
                 File folder = new File("res/audio");
                 File[] listOfFiles = folder.listFiles();
+                // by default sorts pathnames lexicographically. If you want to sort them differently, you can define your own comparator.
+                Arrays.sort(listOfFiles); // 按字典順序
+
                 ArrayList<String> fileNamelist = new ArrayList<>();
                 // 把音檔路徑，存入list
                 for (int i = 0; i < listOfFiles.length; i++) {
                     if (listOfFiles[i].isFile()) {
-                        System.out.println("File " + listOfFiles[i].getName());
+                        System.out.println("audio File " + listOfFiles[i].getName());
                         fileNamelist.add("res/audio/"+listOfFiles[i].getName());
                     } else if (listOfFiles[i].isDirectory()) {
                         System.out.println("Directory " + listOfFiles[i].getName());
@@ -54,8 +53,7 @@ public class MyPanel extends JPanel {
                     @Override
                     public void keyPressed(KeyEvent e) {
                         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                            System.out.println("Hi from KeyListener");
-
+                            // System.out.println("Hi from KeyListener");
 
                             // 產生隨機數字
                             int min = 1;
@@ -89,13 +87,16 @@ public class MyPanel extends JPanel {
 
         File folder = new File("res/imgs");
         File[] listOfFiles = folder.listFiles();
+        // by default sorts pathnames lexicographically. If you want to sort them differently, you can define your own comparator.
+        Arrays.sort(listOfFiles); // 按字典順序
 
         ArrayList<String> fileNamelist = new ArrayList<>();
 
         // 把圖檔路徑，存入list
         for (int i = 0; i < listOfFiles.length; i++) {
+
             if (listOfFiles[i].isFile()) {
-//                System.out.println("File " + listOfFiles[i].getName());
+                System.out.println("image File " + listOfFiles[i].getName());
                 fileNamelist.add("res/imgs/"+listOfFiles[i].getName());
             } else if (listOfFiles[i].isDirectory()) {
                 System.out.println("Directory " + listOfFiles[i].getName());
