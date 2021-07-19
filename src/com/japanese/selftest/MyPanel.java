@@ -16,38 +16,21 @@ public class MyPanel extends JPanel {
     BufferedImage img;
 
     String img1 = "res/imgs/h_a.png";
-    String img2 = "res/imgs/h_i.png";
-    String img3 = "res/imgs/h_u.png";
-
-    boolean evenClick = false;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame frm = new JFrame();
+                JFrame frm = new JFrame("點擊切換 字卡");
                 frm.setSize(600,550);
                 frm.setVisible(true);
-
                 frm.setFocusable(true);
-
                 frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frm.setLocationRelativeTo(null); // center the window
                 frm.add(new MyPanel());
-
-//                frm.addKeyListener(new KeyAdapter() {
-//                    @Override
-//                    public void keyPressed(KeyEvent e) {
-//                        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-//                            System.out.println("Hi from KeyListener");
-//
-//                        }
-//                    }
-//                });
-
             }
         });
     }
-
 
     public MyPanel (){
         setSize(600,550);
@@ -64,7 +47,7 @@ public class MyPanel extends JPanel {
         // 把圖檔路徑，存入list
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
-                System.out.println("File " + listOfFiles[i].getName());
+//                System.out.println("File " + listOfFiles[i].getName());
                 fileNamelist.add("res/imgs/"+listOfFiles[i].getName());
             } else if (listOfFiles[i].isDirectory()) {
                 System.out.println("Directory " + listOfFiles[i].getName());
@@ -105,7 +88,6 @@ public class MyPanel extends JPanel {
         is.close();
         return img;
     }
-
 
     protected void paintComponent(Graphics graphics){
         super.paintComponent(graphics);
