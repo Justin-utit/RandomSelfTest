@@ -34,18 +34,20 @@ public class MyPanel extends JPanel {
                 frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frm.add(new MyPanel());
 
-                frm.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyPressed(KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                            System.out.println("Hi from KeyListener");
-                        }
-                    }
-                });
+//                frm.addKeyListener(new KeyAdapter() {
+//                    @Override
+//                    public void keyPressed(KeyEvent e) {
+//                        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+//                            System.out.println("Hi from KeyListener");
+//
+//                        }
+//                    }
+//                });
 
             }
         });
     }
+
 
     public MyPanel (){
         setSize(600,550);
@@ -54,34 +56,21 @@ public class MyPanel extends JPanel {
         // 先載入第一張 png
         loadImage(img1); // 相對路徑字串
 
-
         File folder = new File("res/imgs");
         File[] listOfFiles = folder.listFiles();
 
         ArrayList<String> fileNamelist = new ArrayList<>();
 
+        // 把圖檔路徑，存入list
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
                 System.out.println("File " + listOfFiles[i].getName());
                 fileNamelist.add("res/imgs/"+listOfFiles[i].getName());
-
-
-
             } else if (listOfFiles[i].isDirectory()) {
                 System.out.println("Directory " + listOfFiles[i].getName());
             }
         }
 
-
-//        this.addKeyListener(new KeyAdapter() {
-//            @Override
-//            public void keyTyped(KeyEvent e) {
-//                System.out.println("keyTyped: '" + e.getKeyChar() + "'");
-//            }
-//        });
-
-
-        /*
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -100,7 +89,6 @@ public class MyPanel extends JPanel {
                 updateUI();
             }
         });
-        */
 
     }
 
@@ -121,7 +109,7 @@ public class MyPanel extends JPanel {
 
     protected void paintComponent(Graphics graphics){
         super.paintComponent(graphics);
-        graphics.drawImage(img, 0, 0, 600, 550, this);
+        graphics.drawImage(img, 0, -80, 600, 550, this);
     }
 
 
