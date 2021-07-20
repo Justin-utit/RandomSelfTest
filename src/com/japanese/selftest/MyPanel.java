@@ -63,7 +63,7 @@ public class MyPanel extends JPanel implements KeyListener{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame frm = new JFrame("點擊切換 字卡");
+                JFrame frm = new JFrame("Vocab Trainer");
                 frm.setSize(600,550);
                 frm.setVisible(true);
                 frm.setFocusable(true);
@@ -75,7 +75,7 @@ public class MyPanel extends JPanel implements KeyListener{
                     @Override
                     public void keyPressed(KeyEvent e) {
                         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                           System.out.println("Hi from KeyListener (main)");
+//                           System.out.println("Hi from KeyListener (main)");
                            playAudio();
                         }
                     }
@@ -90,10 +90,17 @@ public class MyPanel extends JPanel implements KeyListener{
         // 產生隨機數字
         int min = 1;
         int max = rangedAudiolist.size();
+
+//        System.out.println(max);
+        if(max==0) { // 提示先設範圍
+            JOptionPane.showMessageDialog(null, label, "InfoBox: playAudio", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
         // 點一下，就get a random index
         String pathWzName = rangedAudiolist.get(random_int-1); // index從0 開始
-        // String bip = "res/audio/a.mp3";
+        System.out.println(pathWzName);
         File file = new File(pathWzName);
         MP3Player mp3Player = new MP3Player(file);
         mp3Player.play();
@@ -103,9 +110,17 @@ public class MyPanel extends JPanel implements KeyListener{
         // 產生隨機數字
         int min = 1;
         int max = rangedImagelist.size();
+
+//        System.out.println(max);
+        if(max==0) { // 提示先設範圍
+            JOptionPane.showMessageDialog(null, label, "InfoBox: setImage()", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
         // 點一下，就get a random index
         String pathWzName = rangedImagelist.get(random_int-1); // index從0 開始
+        System.out.println(pathWzName);
         // 載入檔案
         loadImage(pathWzName);
     }
@@ -130,20 +145,19 @@ public class MyPanel extends JPanel implements KeyListener{
 
 
 
-    // 宣告 components (for Panel)
-    JTextField jt = new JTextField(2);
-    JLabel jl = new JLabel("起:");
-    JTextField jt2 = new JTextField(2);
-    JLabel jl2 = new JLabel("迄:");
-    JLabel jl3 = new JLabel(" - ");
-    JLabel jl4 = new JLabel(" 例如: ka - so ");
-    JButton btn = new JButton("設定範圍 / 下一張");
+
 
     private void setAlphabetRange() {
-        System.out.println("fire button on enter");
+//        System.out.println("fire button on enter");
         // 取得指定的頭尾
         String from = StringUtils.trimToNull(jt.getText());
         String to = StringUtils.trimToNull(jt2.getText());
+
+        if(from==null || to ==null) { // 提示先設範圍
+            JOptionPane.showMessageDialog(null, label, "InfoBox: setAlphabetRange()", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         startAlphabet = from;
         endAlphabet = to;
         int start = myMap.get(startAlphabet); // 不指定 就註解掉
@@ -182,6 +196,10 @@ public class MyPanel extends JPanel implements KeyListener{
                 System.out.println("Directory " + listOfImageFiles[i].getName());
             }
         }
+
+        JLabel label = new JLabel("已設定範圍: " + startAlphabet + " - " +endAlphabet);
+        label.setFont(font18);
+        JOptionPane.showMessageDialog(null, label, "InfoBox: setAlphabetRange()", JOptionPane.INFORMATION_MESSAGE);
     }
 
     protected void paintComponent(Graphics graphics){
@@ -203,28 +221,73 @@ public class MyPanel extends JPanel implements KeyListener{
         myMap = Collections.unmodifiableMap(aMap);
     }
 
+    // 宣告 components (for Panel)
+    JLabel emptyLable = new JLabel("     ");
+    JLabel jl = new JLabel("起:");
+    JTextField jt = new JTextField(2);
+    JLabel jl2 = new JLabel("迄:");
+    JTextField jt2 = new JTextField(2);
+    JLabel jl3 = new JLabel(" - ");
+    JLabel jl4 = new JLabel(" 例如: ka - so ");
+    JButton btn = new JButton("設定範圍 / 下一張");
+    JButton btn2 = new JButton("使用說明");
+
+    Font font16 = new Font("Serif", Font.BOLD,16);
+    Font font18 = new Font("Serif", Font.BOLD,18);
+    static JLabel label = new JLabel("請先設定範圍");
+
     private void componentsSetFont() {
-        // Label 加進 Panel
-        Font font = new Font("Serif", Font.BOLD,16);
-        jl.setFont(font);
-        jl2.setFont(font);
-        jt.setFont(font);
-        jt2.setFont(font);
-        jl3.setFont(font);
-        jl4.setFont(font);
+        jl.setFont(font16);
+        jl2.setFont(font16);
+        jt.setFont(font16);
+        jt2.setFont(font16);
+        jl3.setFont(font16);
+        jl4.setFont(font16);
         btn.addKeyListener(this); // 必要，keyPressed才能觸發enter,space
-        btn.setFont(font);
+        btn.setFont(font16);
+
+        btn2.setFont(font16);
+
+        label.setFont(font16);
     }
 
     private void addComponentsToPanel() {
+
         // Panel 加進 Label & TextField
+        btn2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("點下說明!!");
+
+                JLabel label = new JLabel("<HTML>1. 先設定範圍 (例如 ka - so 全小寫)<br>" +
+                        "2. 切換字卡: 單點右按鈕 > 按空白鍵 <br>" +
+                        "3. 播放聲音: 單點中間 > 單點tab > 按空白鍵 <br>" +
+                        "</HTML>" );
+                label.setFont(font16);
+                JOptionPane.showMessageDialog(null, label, "InfoBox: 使用說明", JOptionPane.INFORMATION_MESSAGE);
+
+            }
+        });
+        this.add(btn2);
+        this.add(emptyLable);
+
         this.add(jl);
         this.add(jt);
         this.add(jl3); // -
         this.add(jl2);
         this.add(jt2);
         this.add(jl4); // 例如: ka - so
+        // Panel 加進 Label & TextField
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("點下大按鈕!!");
+                setAlphabetRange();
+            }
+        });
         this.add(btn);
+
+
     }
 
     @Override
