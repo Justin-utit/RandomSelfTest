@@ -204,6 +204,10 @@ public class MyPanel extends JPanel implements KeyListener{
 
 
     private void setAlphabetRange() {
+        // 先清空舊的清單
+        rangedAudiolist.clear();
+        rangedImagelist.clear();
+
 //        System.out.println("fire button on enter");
         // 取得指定的頭尾
         String from = StringUtils.trimToNull(jt.getText());
