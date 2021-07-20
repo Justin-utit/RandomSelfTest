@@ -31,6 +31,9 @@ public class MyPanel extends JPanel implements KeyListener{
     static ArrayList<String> rangedAudiolist = new ArrayList<>();
     static ArrayList<String> rangedImagelist = new ArrayList<>();
 
+    static int width = 650;
+    static int height = 750;
+
     // fire button on enter
     @Override
     public void keyPressed(KeyEvent e) {
@@ -41,7 +44,7 @@ public class MyPanel extends JPanel implements KeyListener{
             case KeyEvent.VK_SPACE:
                 // System.out.println("播放圖檔 (switch case)");
                 setImage();
-                playSingleAudio("res/audio/swish1.mp3");
+                playSingleAudio("res/swish1.mp3");
                 updateUI();
                 break;
         }
@@ -50,7 +53,7 @@ public class MyPanel extends JPanel implements KeyListener{
 
 
     public MyPanel (){
-        setSize(600,550);
+        setSize(width,height);
         setVisible(true);
         // set component Font
         componentsSetFont();
@@ -63,7 +66,7 @@ public class MyPanel extends JPanel implements KeyListener{
             @Override
             public void mouseClicked(MouseEvent e) {
                 setImage();
-                playSingleAudio("res/audio/swish1.mp3");
+                playSingleAudio("res/swish1.mp3");
                 // 更新ui
                 updateUI();
             }
@@ -86,8 +89,8 @@ public class MyPanel extends JPanel implements KeyListener{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame frm = new JFrame("反射神經");
-                frm.setSize(600,550);
+                JFrame frm = new JFrame("膝反射");
+                frm.setSize(width,height);
                 frm.setVisible(true);
                 frm.setFocusable(true);
                 frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -257,7 +260,7 @@ public class MyPanel extends JPanel implements KeyListener{
 
     protected void paintComponent(Graphics graphics){
         super.paintComponent(graphics);
-        graphics.drawImage(img, 0, -80, 600, 550, this);
+        graphics.drawImage(img, 0, -80, width, height, this);
     }
 
     private static final Map<String, Integer> myMap;
