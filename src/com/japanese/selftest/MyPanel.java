@@ -8,20 +8,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
 
 public class MyPanel extends JPanel implements KeyListener{
 
-    BufferedImage img;
+    static BufferedImage img;
 
     String cover = "res/imgs/a_h_a.png"; // 首頁(封面圖)
-    static String startAlphabet = "ka";
-    static String endAlphabet = "so";
+    static String startAlphabet;
+    static String endAlphabet;
 
     // 指定範圍的圖檔與音檔
     static ArrayList<String> rangedAudiolist = new ArrayList<>();
@@ -31,76 +28,36 @@ public class MyPanel extends JPanel implements KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()) {
-            case KeyEvent.VK_ENTER: // 設定圖檔&音檔的範圍
-                System.out.println("fire button on enter");
-                // 取得指定的頭尾
-                String from = StringUtils.trimToNull(jt.getText());
-                String to = StringUtils.trimToNull(jt2.getText());
-                startAlphabet = from;
-                endAlphabet = to;
-                int start = myMap.get(startAlphabet); // 不指定 就註解掉
-                int end = myMap.get(endAlphabet);
-                System.out.print("start to end: " + startAlphabet + " to " + endAlphabet); System.out.println(" ("+start+ " to "+end+")");
-
-                // 設定音檔範圍:
-                File folder = new File("res/audio");
-                File[] listOfAudioFiles = folder.listFiles();
-                // by default sorts pathnames lexicographically. If you want to sort them differently, you can define your own comparator.
-                Arrays.sort(listOfAudioFiles); // 按字典順序
-                // 把音檔路徑，存入list
-                for (int i = start; i < (end+1); i++) {
-                    System.out.print(i + ", "); // 5-14
-                    if (listOfAudioFiles[i].isFile()) {
-                        System.out.println("audio File " + listOfAudioFiles[i].getName());
-                        rangedAudiolist.add("res/audio/"+listOfAudioFiles[i].getName()); // 結果加到靜態清單
-                    } else if (listOfAudioFiles[i].isDirectory()) {
-                        System.out.println("Directory " + listOfAudioFiles[i].getName());
-                    }
-                }
-
-                // 設定圖檔範圍:
-                File imgFolder = new File("res/imgs");
-                File[] listOfImageFiles = imgFolder.listFiles();
-                // by default sorts pathnames lexicographically. If you want to sort them differently, you can define your own comparator.
-                Arrays.sort(listOfImageFiles); // 按字典順序
-                // 把圖檔路徑，存入list
-                for (int i = start; i < (end+1); i++) {
-                    System.out.print(i + ", "); // 5-14
-                    if (listOfImageFiles[i].isFile()) {
-                        System.out.println("image File " + listOfImageFiles[i].getName());
-                        rangedImagelist.add("res/imgs/"+listOfImageFiles[i].getName()); // 結果加到靜態清單
-                    } else if (listOfImageFiles[i].isDirectory()) {
-                        System.out.println("Directory " + listOfImageFiles[i].getName());
-                    }
-                }
+            case KeyEvent.VK_ENTER: // 設定範圍 (圖檔&音檔)
+                setAlphabetRange();
                 break;
             case KeyEvent.VK_SPACE:
-
-                System.out.println("Hi from KeyListener (switch case)");
-                // 產生隨機數字
-                int min = 1;
-                int max = rangedAudiolist.size();
-                int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
-
-                // 點一下，就get a random index
-                String pathWzName = rangedAudiolist.get(random_int-1); // index從0 開始
-
-                // String bip = "res/audio/a.mp3";
-                File file = new File(pathWzName);
-
-                MP3Player mp3Player = new MP3Player(file);
-                mp3Player.play();
+                // System.out.println("播放圖檔 (switch case)");
+                setImage();
+                updateUI();
                 break;
         }
     }
-    @Override
-    public void keyReleased(KeyEvent e) { }
-    @Override
-    public void keyTyped(KeyEvent e) { }
 
-
-
-
+    public MyPanel (){
+        setSize(600,550);
+        setVisible(true);
+        // set component Font
+        componentsSetFont();
+        // set components
+        addComponentsToPanel();
+        // 先載入第一張 png
+        loadImage(cover); // 相對路徑字串
+        // 點panel刷圖檔(算多的)
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                setImage();
+                // 更新ui
+                updateUI();
+            }
+        });
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -113,27 +70,13 @@ public class MyPanel extends JPanel implements KeyListener{
                 frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frm.setLocationRelativeTo(null); // center the window
                 frm.add(new MyPanel()); // Panel 初始化 (click 觸發圖檔)
-
                 // space 觸發音檔
                 frm.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyPressed(KeyEvent e) {
                         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                             System.out.println("Hi from KeyListener (main)");
-//
-                            // 產生隨機數字
-                            int min = 1;
-                            int max = rangedAudiolist.size();
-                            int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
-
-                            // 點一下，就get a random index
-                            String pathWzName = rangedAudiolist.get(random_int-1); // index從0 開始
-
-                            // String bip = "res/audio/a.mp3";
-                            File file = new File(pathWzName);
-
-                            MP3Player mp3Player = new MP3Player(file);
-                            mp3Player.play();
+                           System.out.println("Hi from KeyListener (main)");
+                           playAudio();
                         }
                     }
                 });
@@ -143,6 +86,40 @@ public class MyPanel extends JPanel implements KeyListener{
 
 
 
+    private static void playAudio(){
+        // 產生隨機數字
+        int min = 1;
+        int max = rangedAudiolist.size();
+        int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
+        // 點一下，就get a random index
+        String pathWzName = rangedAudiolist.get(random_int-1); // index從0 開始
+        // String bip = "res/audio/a.mp3";
+        File file = new File(pathWzName);
+        MP3Player mp3Player = new MP3Player(file);
+        mp3Player.play();
+    }
+
+    private static void setImage() {
+        // 產生隨機數字
+        int min = 1;
+        int max = rangedImagelist.size();
+        int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
+        // 點一下，就get a random index
+        String pathWzName = rangedImagelist.get(random_int-1); // index從0 開始
+        // 載入檔案
+        loadImage(pathWzName);
+    }
+    private static void loadImage(String imgPath){
+        try {
+            // img = getImage2(imgPath);
+            InputStream is = new FileInputStream(imgPath);
+            img = ImageIO.read(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+    }
 
 
 
@@ -150,73 +127,61 @@ public class MyPanel extends JPanel implements KeyListener{
 
 
 
-    // 宣告 components
+
+
+
+    // 宣告 components (for Panel)
     JTextField jt = new JTextField(2);
     JLabel jl = new JLabel("起:");
     JTextField jt2 = new JTextField(2);
     JLabel jl2 = new JLabel("迄:");
     JLabel jl3 = new JLabel(" - ");
     JLabel jl4 = new JLabel(" 例如: ka - so ");
-    JButton btn = new JButton("設定範圍");
+    JButton btn = new JButton("設定範圍 / 下一張");
 
-    public MyPanel (){
-        setSize(600,550);
-        setVisible(true);
+    private void setAlphabetRange() {
+        System.out.println("fire button on enter");
+        // 取得指定的頭尾
+        String from = StringUtils.trimToNull(jt.getText());
+        String to = StringUtils.trimToNull(jt2.getText());
+        startAlphabet = from;
+        endAlphabet = to;
+        int start = myMap.get(startAlphabet); // 不指定 就註解掉
+        int end = myMap.get(endAlphabet);
+        System.out.print("start to end: " + startAlphabet + " to " + endAlphabet);
+        System.out.println(" ("+start+ " to "+end+")");
 
-        componentsSetFont();
-
-        addComponentsToPanel();
-
-        // 先載入第一張 png
-        loadImage(cover); // 相對路徑字串
-
-        // 點panel刷圖檔
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // 產生隨機數字
-                int min = 1;
-                int max = rangedImagelist.size();
-                int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
-
-                // 點一下，就get a random index
-                String pathWzName = rangedImagelist.get(random_int-1); // index從0 開始
-
-                // 載入檔案
-                loadImage(pathWzName);
-
-                // 更新ui
-                updateUI();
+        // 設定音檔範圍:
+        File folder = new File("res/audio");
+        File[] listOfAudioFiles = folder.listFiles();
+        // by default sorts pathnames lexicographically. If you want to sort them differently, you can define your own comparator.
+        Arrays.sort(listOfAudioFiles); // 按字典順序
+        // 把音檔路徑，存入list
+        for (int i = start; i < (end+1); i++) {
+            System.out.print(i + ", "); // 5-14
+            if (listOfAudioFiles[i].isFile()) {
+                System.out.println("audio File " + listOfAudioFiles[i].getName());
+                rangedAudiolist.add("res/audio/"+listOfAudioFiles[i].getName()); // 結果加到靜態清單
+            } else if (listOfAudioFiles[i].isDirectory()) {
+                System.out.println("Directory " + listOfAudioFiles[i].getName());
             }
-        });
-
-    }
-
-    private void addComponentsToPanel() {
-        // Panel 加進 Label & TextField
-        this.add(jl);
-        this.add(jt);
-//        this.add(tempLabel);
-        this.add(jl3); // -
-        this.add(jl2);
-        this.add(jt2);
-        this.add(jl4); // 例如: ka - so
-        this.add(btn);
-    }
-
-
-    private void loadImage(String imgPath){
-        try {
-            img = getImage2(imgPath);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-    }
-    private BufferedImage getImage2(String res) throws IOException {
-        InputStream is = new FileInputStream(res);
-        BufferedImage img = ImageIO.read(is);
-        is.close();
-        return img;
+
+        // 設定圖檔範圍:
+        File imgFolder = new File("res/imgs");
+        File[] listOfImageFiles = imgFolder.listFiles();
+        // by default sorts pathnames lexicographically. If you want to sort them differently, you can define your own comparator.
+        Arrays.sort(listOfImageFiles); // 按字典順序
+        // 把圖檔路徑，存入list
+        for (int i = start; i < (end+1); i++) {
+            System.out.print(i + ", "); // 5-14
+            if (listOfImageFiles[i].isFile()) {
+                System.out.println("image File " + listOfImageFiles[i].getName());
+                rangedImagelist.add("res/imgs/"+listOfImageFiles[i].getName()); // 結果加到靜態清單
+            } else if (listOfImageFiles[i].isDirectory()) {
+                System.out.println("Directory " + listOfImageFiles[i].getName());
+            }
+        }
     }
 
     protected void paintComponent(Graphics graphics){
@@ -251,5 +216,19 @@ public class MyPanel extends JPanel implements KeyListener{
         btn.setFont(font);
     }
 
+    private void addComponentsToPanel() {
+        // Panel 加進 Label & TextField
+        this.add(jl);
+        this.add(jt);
+        this.add(jl3); // -
+        this.add(jl2);
+        this.add(jt2);
+        this.add(jl4); // 例如: ka - so
+        this.add(btn);
+    }
 
+    @Override
+    public void keyReleased(KeyEvent e) { }
+    @Override
+    public void keyTyped(KeyEvent e) { }
 }
