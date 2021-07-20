@@ -2,6 +2,10 @@ package com.japanese.selftest;
 
 import jaco.mp3.player.MP3Player;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Appender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -9,7 +13,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
+
 
 
 public class MyPanel extends JPanel implements KeyListener{
@@ -59,7 +66,19 @@ public class MyPanel extends JPanel implements KeyListener{
         });
     }
 
+    static long programStartTime;
+
     public static void main(String[] args) {
+        programStartTime = System.nanoTime(); // 記錄程式啟動時間
+        // 關程式時，記錄程式使用時間
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                System.out.println("In shutdown hook");
+                long timeSpentInMin = getTimeSpentInMin();
+                writeLogs(timeSpentInMin);
+            }
+        }, "Shutdown-thread"));
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -84,6 +103,40 @@ public class MyPanel extends JPanel implements KeyListener{
         });
     }
 
+    private static void writeLogs(long timeSpentInMin) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = simpleDateFormat.format(new Date());
+
+//      if(minutes>0) { // 打開則滿一分鐘才寫log
+        String record = date + " 程式啟動時間: " + timeSpentInMin + " 分鐘";
+
+        Logger logger = Logger.getLogger("MyLog");
+        Appender fh = null;
+        try {
+            fh = new FileAppender(new SimpleLayout(), "MyLogFile.log");
+            logger.addAppender(fh);
+            fh.setLayout(new SimpleLayout());
+            logger.info(record);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//      }
+    }
+
+    private static long getTimeSpentInMin() {
+        long programEndTime = System.nanoTime();
+        long timeElapsed = programEndTime - programStartTime;
+
+        long milliseconds = timeElapsed / 1000000; // 使用之毫秒
+//                System.out.println("Execution time in milliseconds: " + milliseconds);
+        long minutes = (milliseconds / 1000) / 60; // 使用之分鐘
+//                System.out.println("Execution time in minutes: " + minutes);
+//                long seconds = (milliseconds / 1000) % 60; // 使用之秒數
+//                System.out.println("Execution time in seconds: " + seconds);
+        return minutes;
+    }
 
 
     private static void playAudio(){
