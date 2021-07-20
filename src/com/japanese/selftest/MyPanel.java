@@ -41,10 +41,13 @@ public class MyPanel extends JPanel implements KeyListener{
             case KeyEvent.VK_SPACE:
                 // System.out.println("播放圖檔 (switch case)");
                 setImage();
+                playSingleAudio("res/audio/swish1.mp3");
                 updateUI();
                 break;
         }
     }
+
+
 
     public MyPanel (){
         setSize(600,550);
@@ -60,6 +63,7 @@ public class MyPanel extends JPanel implements KeyListener{
             @Override
             public void mouseClicked(MouseEvent e) {
                 setImage();
+                playSingleAudio("res/audio/swish1.mp3");
                 // 更新ui
                 updateUI();
             }
@@ -82,7 +86,7 @@ public class MyPanel extends JPanel implements KeyListener{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame frm = new JFrame("Vocab Trainer");
+                JFrame frm = new JFrame("反射神經");
                 frm.setSize(600,550);
                 frm.setVisible(true);
                 frm.setFocusable(true);
@@ -139,6 +143,7 @@ public class MyPanel extends JPanel implements KeyListener{
     }
 
 
+
     private static void playAudio(){
         // 產生隨機數字
         int min = 1;
@@ -154,6 +159,10 @@ public class MyPanel extends JPanel implements KeyListener{
         // 點一下，就get a random index
         String pathWzName = rangedAudiolist.get(random_int-1); // index從0 開始
         System.out.println(pathWzName);
+        playSingleAudio(pathWzName);
+    }
+
+    private static void playSingleAudio(String pathWzName) {
         File file = new File(pathWzName);
         MP3Player mp3Player = new MP3Player(file);
         mp3Player.play();
@@ -188,15 +197,6 @@ public class MyPanel extends JPanel implements KeyListener{
             System.out.println(e.getMessage());
         }
     }
-
-
-
-
-
-
-
-
-
 
 
 
