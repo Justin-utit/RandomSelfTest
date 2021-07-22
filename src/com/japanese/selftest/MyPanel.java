@@ -47,9 +47,11 @@ public class MyPanel extends JPanel implements KeyListener{
                 playSingleAudio("res/swish1.mp3");
                 updateUI();
                 break;
+            case KeyEvent.VK_H:
+                playSingleAudio(pronunciation); // "res/audio/d_e.mp3"
         }
     }
-
+    private static String pronunciation;
 
 
     public MyPanel (){
@@ -89,7 +91,7 @@ public class MyPanel extends JPanel implements KeyListener{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame frm = new JFrame("膝反射");
+                JFrame frm = new JFrame("【暴力記憶】");
                 frm.setSize(width,height);
                 frm.setVisible(true);
                 frm.setFocusable(true);
@@ -110,40 +112,7 @@ public class MyPanel extends JPanel implements KeyListener{
         });
     }
 
-    private static void writeLogs(long timeSpentInMin) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String date = simpleDateFormat.format(new Date());
 
-//      if(minutes>0) { // 打開則滿一分鐘才寫log
-        String record = date + " 程式啟動時間: " + timeSpentInMin + " 分鐘";
-
-        Logger logger = Logger.getLogger("MyLog");
-        Appender fh = null;
-        try {
-            fh = new FileAppender(new SimpleLayout(), "MyLogFile.log");
-            logger.addAppender(fh);
-            fh.setLayout(new SimpleLayout());
-            logger.info(record);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//      }
-    }
-
-    private static long getTimeSpentInMin() {
-        long programEndTime = System.nanoTime();
-        long timeElapsed = programEndTime - programStartTime;
-
-        long milliseconds = timeElapsed / 1000000; // 使用之毫秒
-//                System.out.println("Execution time in milliseconds: " + milliseconds);
-        long minutes = (milliseconds / 1000) / 60; // 使用之分鐘
-//                System.out.println("Execution time in minutes: " + minutes);
-//                long seconds = (milliseconds / 1000) % 60; // 使用之秒數
-//                System.out.println("Execution time in seconds: " + seconds);
-        return minutes;
-    }
 
 
 
@@ -184,10 +153,14 @@ public class MyPanel extends JPanel implements KeyListener{
 
         int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
         // 點一下，就get a random index
-        String pathWzName = rangedImagelist.get(random_int-1); // index從0 開始
-        System.out.println(pathWzName);
+        String pathWzImageName = rangedImagelist.get(random_int-1); // index從0 開始
+        String pathWzAudioName = rangedAudiolist.get(random_int-1);
+        System.out.println(pathWzImageName);
+//        System.out.println(pathWzAudioName);
+        pronunciation = pathWzAudioName; // 念不出時，可以發出該字的音
+
         // 載入檔案
-        loadImage(pathWzName);
+        loadImage(pathWzImageName);
     }
     private static void loadImage(String imgPath){
         try {
@@ -348,6 +321,41 @@ public class MyPanel extends JPanel implements KeyListener{
         this.add(btn);
 
 
+    }
+
+    private static void writeLogs(long timeSpentInMin) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = simpleDateFormat.format(new Date());
+
+//      if(minutes>0) { // 打開則滿一分鐘才寫log
+        String record = date + " 程式啟動時間: " + timeSpentInMin + " 分鐘";
+
+        Logger logger = Logger.getLogger("MyLog");
+        Appender fh = null;
+        try {
+            fh = new FileAppender(new SimpleLayout(), "MyLogFile.log");
+            logger.addAppender(fh);
+            fh.setLayout(new SimpleLayout());
+            logger.info(record);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//      }
+    }
+
+    private static long getTimeSpentInMin() {
+        long programEndTime = System.nanoTime();
+        long timeElapsed = programEndTime - programStartTime;
+
+        long milliseconds = timeElapsed / 1000000; // 使用之毫秒
+//                System.out.println("Execution time in milliseconds: " + milliseconds);
+        long minutes = (milliseconds / 1000) / 60; // 使用之分鐘
+//                System.out.println("Execution time in minutes: " + minutes);
+//                long seconds = (milliseconds / 1000) % 60; // 使用之秒數
+//                System.out.println("Execution time in seconds: " + seconds);
+        return minutes;
     }
 
     @Override
