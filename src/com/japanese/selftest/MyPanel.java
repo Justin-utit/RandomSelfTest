@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-
 public class MyPanel extends JPanel implements KeyListener{
 
     static BufferedImage img;
@@ -34,6 +33,9 @@ public class MyPanel extends JPanel implements KeyListener{
     static int width = 650;
     static int height = 750;
 
+    private static String pronunciation; // 念不出來時的發音提示
+    private static String imageOfCurrentSound; // 寫不出來時的圖像提示
+
     // fire button on enter
     @Override
     public void keyPressed(KeyEvent e) {
@@ -47,11 +49,12 @@ public class MyPanel extends JPanel implements KeyListener{
                 playSingleAudio("res/swish1.mp3");
                 updateUI();
                 break;
-            case KeyEvent.VK_H:
+            case KeyEvent.VK_H: // 右手順
                 playSingleAudio(pronunciation); // "res/audio/d_e.mp3"
+                break;
         }
     }
-    private static String pronunciation;
+
 
 
     public MyPanel (){
@@ -63,14 +66,17 @@ public class MyPanel extends JPanel implements KeyListener{
         addComponentsToPanel();
         // 先載入第一張 png
         loadImage(cover); // 相對路徑字串
-        // 點panel刷圖檔(算多的)
+
+        // 點panel: 聽到字寫不出來時，點中間可以看到現在念的字。
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                setImage();
+                // 顯示當前發音的字樣
+                // System.out.println("imageOfCurrentSound: " + imageOfCurrentSound);
+                loadImage(imageOfCurrentSound);
                 playSingleAudio("res/swish1.mp3");
                 // 更新ui
-                updateUI();
+                updateUI(); // 這個只有一般的方法，無法從static的方法呼叫
             }
         });
     }
@@ -112,10 +118,6 @@ public class MyPanel extends JPanel implements KeyListener{
         });
     }
 
-
-
-
-
     private static void playAudio(){
         // 產生隨機數字
         int min = 1;
@@ -129,9 +131,12 @@ public class MyPanel extends JPanel implements KeyListener{
 
         int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
         // 點一下，就get a random index
-        String pathWzName = rangedAudiolist.get(random_int-1); // index從0 開始
-        System.out.println(pathWzName);
-        playSingleAudio(pathWzName);
+        String audioPathWzName = rangedAudiolist.get(random_int-1); // index從0 開始
+        String imagePathWzName = rangedImagelist.get(random_int-1);
+        imageOfCurrentSound = imagePathWzName; // 聽寫發音時，該發音對應的圖會存起來
+
+        System.out.println(audioPathWzName);
+        playSingleAudio(audioPathWzName);
     }
 
     private static void playSingleAudio(String pathWzName) {
@@ -173,8 +178,6 @@ public class MyPanel extends JPanel implements KeyListener{
             System.out.println(e.getMessage());
         }
     }
-
-
 
     private void setAlphabetRange() {
         // 先清空舊的清單
@@ -293,8 +296,8 @@ public class MyPanel extends JPanel implements KeyListener{
                 System.out.println("點下說明!!");
 
                 JLabel label = new JLabel("<HTML>1. 先設定範圍 (例如 ka - so 全小寫)<br>" +
-                        "2. 切換字卡: 單點右按鈕 > 按空白鍵 <br>" +
-                        "3. 播放聲音: 單點中間 > 單點tab > 按空白鍵 <br>" +
+                        "2. 按空白鍵，開始切換字卡 (H鍵發音)<br>" +
+                        "3. 單點tab(進發音模式) > 按空白鍵，開始發音 (點中間看發音的字) <br>" +
                         "</HTML>" );
                 label.setFont(font16);
                 JOptionPane.showMessageDialog(null, label, "InfoBox: 使用說明", JOptionPane.INFORMATION_MESSAGE);
