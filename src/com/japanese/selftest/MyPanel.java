@@ -22,7 +22,7 @@ public class MyPanel extends JPanel implements KeyListener{
 
     static BufferedImage img;
 
-    String cover = "res/imgs/a_h_a.png"; // 首頁(封面圖)
+    String cover = "res/imgs/aa_h_a.png"; // 首頁(封面圖)
     static String startAlphabet;
     static String endAlphabet;
 
@@ -254,6 +254,15 @@ public class MyPanel extends JPanel implements KeyListener{
         aMap.put("so",14);
         aMap.put("ta",15);
         aMap.put("to",19);
+
+        aMap.put("na",20);
+        aMap.put("no",24);
+        aMap.put("ha",25);
+        aMap.put("ho",29);
+        aMap.put("ma",30);
+        aMap.put("mo",34);
+        aMap.put("ya",35);
+        aMap.put("yo",37);
         myMap = Collections.unmodifiableMap(aMap);
     }
 
